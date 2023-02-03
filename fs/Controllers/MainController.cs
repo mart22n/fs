@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using fs.Models;
+using fs.Model;
 
 namespace fs.Controllers;
 
-public class HomeController : Controller
+public class MainController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<MainController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public MainController(ILogger<MainController> logger)
     {
         _logger = logger;
     }
