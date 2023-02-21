@@ -7,6 +7,7 @@ using System.Web.Http;
 using Minio;
 using Minio.Exceptions;
 using Minio.DataModel;
+using System.Configuration;
 
 namespace fs.Controllers
 {
@@ -15,26 +16,36 @@ namespace fs.Controllers
         [Microsoft.AspNetCore.Mvc.Route("/PresignedUrl/name={fileName}")]
         public async Task<IHttpActionResult> Index(string fileName)
         {
+            var appSettings = System.Configuration.ConfigurationManager.AppSettings;
+
             this.Configuration = new HttpConfiguration();
             this.Request = new HttpRequestMessage();
-            var endpoint = "play.min.io";
-            var bucketName = "tset";
+            string? endpoint = appSettings["MinioApiAddr"];
+            string? bucketName = appSettings["MinioBucketName"];
             var objectName = fileName;
             string uploadUrl = "";
 
-            MinioClient minio = new MinioClient()
-                             .WithEndpoint(endpoint)
-                             .WithCredentials("minioadmin", "minioadmin")
-                             .WithSSL()
-                             .Build();
-
-            if (await bucketExists(minio, bucketName))
+            try
             {
-                var tuple = await setPolicy(minio, bucketName, objectName);
-                uploadUrl = await getUploadUrl(minio, bucketName, objectName);
-                return Ok(uploadUrl);
+                MinioClient minio = new MinioClient()
+                                 .WithEndpoint(endpoint)
+                                 .WithCredentials(appSettings["MinioUser"],
+                                    appSettings["MinioPwd"])
+                                 .WithSSL()
+                                 .Build();
+
+                if (await bucketExists(minio, bucketName))
+                {
+                    var tuple = await setPolicy(minio, bucketName, objectName);
+                    uploadUrl = await getUploadUrl(minio, bucketName, objectName);
+                    return Ok(uploadUrl);
+                }
+                return (IHttpActionResult)Results.StatusCode(500);
             }
-            return (IHttpActionResult)Results.StatusCode(500);
+            catch(Exception e)
+            {
+                return (IHttpActionResult)Results.StatusCode(500);
+            }
         }
 
         async static Task<(Uri, Dictionary<string, string>)> setPolicy(IMinioClient client,

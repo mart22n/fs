@@ -19,7 +19,7 @@ public partial class TestContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql(System.Configuration.ConfigurationManager.AppSettings["ConnString"],
+        => optionsBuilder.UseMySql(System.Configuration.ConfigurationManager.AppSettings["DbConnString"],
             Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.7.7-mariadb"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
