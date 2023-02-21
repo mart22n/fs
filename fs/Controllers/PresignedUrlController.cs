@@ -21,7 +21,8 @@ namespace fs.Controllers
             this.Configuration = new HttpConfiguration();
             this.Request = new HttpRequestMessage();
             string? endpoint = appSettings["MinioApiAddr"];
-            string? bucketName = appSettings["MinioBucketName"];
+            string bucketName = (appSettings["MinioBucketName"] != null ?
+                appSettings["MinioBucketName"] : string.Empty);
             var objectName = fileName;
             string uploadUrl = "";
 
@@ -42,7 +43,7 @@ namespace fs.Controllers
                 }
                 return (IHttpActionResult)Results.StatusCode(500);
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return (IHttpActionResult)Results.StatusCode(500);
             }

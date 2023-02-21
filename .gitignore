@@ -6,7 +6,6 @@ config.make
 config.status
 aclocal.m4
 install-sh
-app.config
 autom4te.cache/
 *.tar.gz
 tarballs/
